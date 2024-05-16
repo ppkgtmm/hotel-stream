@@ -7,7 +7,7 @@ from staging import TableProcessor
 broker = getenv("KAFKA_SERVER")
 username, password = getenv("DWH_USER"), getenv("DWH_PASSWORD")
 host, database = getenv("DWH_HOST"), getenv("DWH_NAME")
-topic_prefix = database + "." + "public"
+topic_prefix = getenv("DB_NAME") + "." + "public"
 s3_temp_dir = "s3a://" + path.join(getenv("S3_BUCKET"), "temp/data/")
 aws_region = getenv("AWS_REGION")
 
