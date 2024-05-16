@@ -24,7 +24,7 @@ class DimensionProcessor(Processor):
         staging_table = "staging.upsert_" + self.table_name
         dimension_table = "dim_" + self.table_name
         self.stage_records(df, staging_table)
-        self.__engine.execute(
+        self.engine.execute(
             dim_upsert_query.format(dim=dimension_table, stage=staging_table)
         )
         self.stage_records(df, dimension_table, "append")
@@ -33,7 +33,7 @@ class DimensionProcessor(Processor):
         staging_table = "staging.delete_" + self.table_name
         dimension_table = "dim_" + self.table_name
         self.stage_records(df, staging_table)
-        self.__engine.execute(
+        self.engine.execute(
             dim_delete_query.format(dim=dimension_table, stage=staging_table)
         )
 

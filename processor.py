@@ -18,7 +18,7 @@ class Processor:
         aws_region: str,
     ):
         self.table_name = table_name
-        self.__engine = create_engine(
+        self.engine = create_engine(
             f"redshift+redshift_connector://{username}:{password}@{host}/{database}"
         )
         self.__jdbc_url = (
