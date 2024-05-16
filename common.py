@@ -80,33 +80,33 @@ clean_map = {
 
 dim_upsert_query = """
     UPDATE {dim}
-    SET effective_until = {stage}.effective_from
-    FROM {stage}
-    WHERE {dim}._id = {stage}._id AND {dim}.effective_until IS NULL
+    SET effective_until = stg.effective_from
+    FROM {stage} stg
+    WHERE {dim}._id = stg._id AND {dim}.effective_until IS NULL
 """
 
 dim_delete_query = """
     UPDATE {dim}
     SET effective_until = current_timestamp
-    FROM {stage}
-    WHERE {dim}._id = {stage}._id AND {dim}.effective_until IS NULL
+    FROM {stage} stg
+    WHERE {dim}._id = stg._id AND {dim}.effective_until IS NULL
 """
 
 stg_delete_query = """
     UPDATE {stg}
-    SET is_deleted = {temp}.is_deleted
-    FROM {temp}
-    WHERE {stg}.id = {temp}.id
+    SET is_deleted = tmp.is_deleted
+    FROM {temp} tmp
+    WHERE {stg}.id = tmp.id
 """
 
 
 def get_upsert_query(staging_table: str, temp_table: str, columns: list[str]):
-    to_update = ["{} = {}.{}".format(col, temp_table, col) for col in columns]
-    to_insert = ["{}.{}".format(temp_table, col) for col in columns]
+    to_update = ["{} = {}.{}".format(col, "tmp", col) for col in columns]
+    to_insert = ["{}.{}".format("tmp", col) for col in columns]
     return """
         MERGE INTO {stg}
-        USING {temp}
-        ON {stg}.id = {temp}.id
+        USING {temp} tmp
+        ON {stg}.id = tmp.id
         WHEN MATCHED THEN UPDATE SET {to_update}
         WHEN NOT MATCHED THEN INSERT VALUES ({to_insert})
     """.format(
