@@ -15,7 +15,6 @@ if __name__ == "__main__":
     spark = (
         SparkSession.builder.appName("hotel processor")
         .config("spark.driver.memory", "512m")
-        # .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config(
             "spark.jars.packages",
