@@ -103,10 +103,11 @@ stg_delete_query = """
 def get_upsert_query(staging_table: str, temp_table: str, columns: list[str]):
     column_list = ["{} = {}.{}".format(col, temp_table, col) for col in columns]
     return """
-        UPDATE {stg}
-        SET {column_list}
-        FROM {temp}
-        WHERE {stg}.id = {temp}.id
+        MERGE INTO {stg}
+        USING {temp}
+        ON {stg}.id = {temp}.id
+        WHEN MATCHED THEN UPDATE SET {column_list}
+        WHEN NOT MATCHED THEN INSERT 
     """.format(
         stg=staging_table, temp=temp_table, column_list=", ".join(column_list)
     )
