@@ -10,14 +10,14 @@ class TableProcessor(Processor):
         temp_table = "staging.upsert_" + self.table_name
         staging_table = "staging." + self.table_name
         df = df.withColumn("is_deleted", lit(False))
-        self.__stage_stream(df, temp_table)
+        self.__stage_records(df, temp_table)
         self.__engine.execute(get_upsert_query(staging_table, temp_table, df.columns))
 
     def delete_records(self, df: DataFrame, batch_id: int):
         temp_table = "staging.delete_" + self.table_name
         staging_table = "staging." + self.table_name
         df = df.withColumn("is_deleted", lit(True))
-        self.__stage_stream(df, temp_table)
+        self.__stage_records(df, temp_table)
         self.__engine.execute(
             stg_delete_query.format(stg=staging_table, temp=temp_table)
         )

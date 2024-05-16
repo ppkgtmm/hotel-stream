@@ -23,16 +23,16 @@ class DimensionProcessor(Processor):
     def upsert_records(self, df: DataFrame, batch_id: int):
         staging_table = "staging.upsert_" + self.table_name
         dimension_table = "dim_" + self.table_name
-        self.stage_stream(df, staging_table)
+        self.__stage_records(df, staging_table)
         self.__engine.execute(
             dim_upsert_query.format(dim=dimension_table, stage=staging_table)
         )
-        self.stage_stream(df, dimension_table, "append")
+        self.__stage_records(df, dimension_table, "append")
 
     def delete_records(self, df: DataFrame, batch_id: int):
         staging_table = "staging.delete_" + self.table_name
         dimension_table = "dim_" + self.table_name
-        self.stage_stream(df, staging_table)
+        self.__stage_records(df, staging_table)
         self.__engine.execute(
             dim_delete_query.format(dim=dimension_table, stage=staging_table)
         )

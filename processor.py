@@ -50,7 +50,7 @@ class Processor:
         )
         return self
 
-    def __stage_stream(self, df: DataFrame, table_name: str, mode="overwrite"):
+    def __stage_records(self, df: DataFrame, table_name: str, mode="overwrite"):
         (
             df.write.format("io.github.spark_redshift_community.spark.redshift")
             .option("url", self.__jdbc_url)
