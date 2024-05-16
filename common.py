@@ -102,6 +102,7 @@ stg_delete_query = """
 
 def get_upsert_query(staging_table: str, temp_table: str, columns: list[str]):
     to_update = ["{} = {}.{}".format(col, temp_table, col) for col in columns]
+    to_insert = ["{}.{}".format(temp_table, col) for col in columns]
     return """
         MERGE INTO {stg}
         USING {temp}
@@ -112,5 +113,5 @@ def get_upsert_query(staging_table: str, temp_table: str, columns: list[str]):
         stg=staging_table,
         temp=temp_table,
         to_update=", ".join(to_update),
-        to_insert=", ".join(columns),
+        to_insert=", ".join(to_insert),
     )
