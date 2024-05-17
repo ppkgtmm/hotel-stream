@@ -21,6 +21,8 @@ class DimensionProcessor(Processor):
         )
 
     def __upsert_records(self, df: DataFrame, batch_id: int):
+        if df.count() == 0:
+            return
         staging_table = "staging.upsert_" + self.table_name
         dimension_table = "dim_" + self.table_name
         self.stage_records(df, staging_table)
@@ -30,6 +32,8 @@ class DimensionProcessor(Processor):
         self.stage_records(df, dimension_table, "append")
 
     def __delete_records(self, df: DataFrame, batch_id: int):
+        if df.count() == 0:
+            return
         staging_table = "staging.delete_" + self.table_name
         dimension_table = "dim_" + self.table_name
         self.stage_records(df, staging_table)

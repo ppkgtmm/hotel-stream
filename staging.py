@@ -7,6 +7,8 @@ from processor import Processor
 class TableProcessor(Processor):
 
     def __upsert_records(self, df: DataFrame, batch_id: int):
+        if df.count() == 0:
+            return
         temp_table = "staging.upsert_" + self.table_name
         staging_table = "staging." + self.table_name
         df = df.withColumn("is_deleted", lit(False))
@@ -14,6 +16,8 @@ class TableProcessor(Processor):
         self.engine.execute(get_upsert_query(staging_table, temp_table, df.columns))
 
     def __delete_records(self, df: DataFrame, batch_id: int):
+        if df.count() == 0:
+            return
         temp_table = "staging.delete_" + self.table_name
         staging_table = "staging." + self.table_name
         df = df.withColumn("is_deleted", lit(True))
