@@ -71,3 +71,4 @@ class Processor:
         with redshift_connector.connect(**self.redshift_parameters) as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query)
+            conn.commit()
