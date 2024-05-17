@@ -1,7 +1,7 @@
-from sqlalchemy import create_engine
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col, get_json_object, from_json
 from common import schema_map
+import redshift_connector
 
 
 class Processor:
@@ -18,9 +18,13 @@ class Processor:
         aws_region: str,
     ):
         self.table_name = table_name
-        self.engine = create_engine(
-            f"redshift+redshift_connector://{username}:{password}@{host}/{database}"
-        )
+        self.redshift_parameters = {
+            "user": username,
+            "password": password,
+            "database": database,
+            "host": host.split(":")[0],
+            "port": host.split(":")[-1],
+        }
         self.__jdbc_url = (
             f"jdbc:redshift://{host}/{database}?user={username}&password={password}"
         )
@@ -61,3 +65,9 @@ class Processor:
             .mode(mode)
             .save()
         )
+
+    def execute_query(self, query: str):
+        # redshift_connector.paramstyle = "named"
+        with redshift_connector.connect(**self.redshift_parameters) as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
