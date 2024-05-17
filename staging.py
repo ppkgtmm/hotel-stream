@@ -13,7 +13,7 @@ class TableProcessor(Processor):
         staging_table = "staging." + self.table_name
         df = df.withColumn("is_deleted", lit(False))
         self.stage_records(df, temp_table)
-        self.engine.execute(get_upsert_query(staging_table, temp_table, df.columns))
+        self.execute_query(get_upsert_query(staging_table, temp_table, df.columns))
 
     def __delete_records(self, df: DataFrame, batch_id: int):
         if df.count() == 0:
@@ -22,9 +22,7 @@ class TableProcessor(Processor):
         staging_table = "staging." + self.table_name
         df = df.withColumn("is_deleted", lit(True))
         self.stage_records(df, temp_table)
-        self.engine.execute(
-            stg_delete_query.format(stg=staging_table, temp=temp_table)
-        )
+        self.execute_query(stg_delete_query.format(stg=staging_table, temp=temp_table))
 
     def load_stream(self):
         (
