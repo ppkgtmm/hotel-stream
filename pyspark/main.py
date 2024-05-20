@@ -14,12 +14,12 @@ aws_region = getenv("AWS_REGION")
 if __name__ == "__main__":
     spark = (
         SparkSession.builder.appName("hotel processor")
-        .config("spark.driver.memory", "512m")
-        .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
-        .config(
-            "spark.jars.packages",
-            "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,io.github.spark-redshift-community:spark-redshift_2.12:6.2.0-spark_3.5,com.amazon.redshift:redshift-jdbc42:2.1.0.26,com.amazonaws:aws-java-sdk-core:1.12.23,com.amazonaws:aws-java-sdk-redshift:1.12.23,com.amazonaws:aws-java-sdk-s3:1.12.23,com.amazonaws:aws-java-sdk-dynamodb:1.12.23,org.apache.spark:spark-avro_2.12:3.5.1",
-        )  # cr. https://stackoverflow.com/questions/54285151/kafka-structured-streaming-kafkasourceprovider-could-not-be-instantiated
+        # .config("spark.driver.memory", "512m")
+        # .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+        # .config(
+        #     "spark.jars.packages",
+        #     "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1,io.github.spark-redshift-community:spark-redshift_2.12:6.2.0-spark_3.5,com.amazon.redshift:redshift-jdbc42:2.1.0.26,com.amazonaws:aws-java-sdk-core:1.12.23,com.amazonaws:aws-java-sdk-redshift:1.12.23,com.amazonaws:aws-java-sdk-s3:1.12.23,com.amazonaws:aws-java-sdk-dynamodb:1.12.23,org.apache.spark:spark-avro_2.12:3.5.1",
+        # )  # cr. https://stackoverflow.com/questions/54285151/kafka-structured-streaming-kafkasourceprovider-could-not-be-instantiated
         .getOrCreate()
     )
     # org.apache.hadoop:hadoop-aws:3.2.2,com.amazonaws:aws-java-sdk-bundle:1.12.722
