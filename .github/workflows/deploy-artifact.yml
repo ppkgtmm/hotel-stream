@@ -1,8 +1,5 @@
 name: deploy artifact to s3
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
