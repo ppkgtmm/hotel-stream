@@ -24,4 +24,4 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.account_id }}:role/github-action-s3
           aws-region: ${{ env.AWS_REGION }}
       - name: deploy code to s3
-        run: aws s3 cp pyspark/ s3://${{ env.BUCKET_NAME }}/pyspark/code/
+        run: aws s3 cp pyspark s3://${{ env.BUCKET_NAME }}/pyspark/code --recursive
