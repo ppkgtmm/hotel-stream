@@ -21,10 +21,8 @@ jobs:
       - name: create dependency archive
         run: |
           mkdir code
-          cp -R pyspark/ code
-          cd code
-          rm main.py
-          zip -r ../dependencies.zip .
+          cp -R pyspark/common.py pyspark/dimension.py pyspark/processor.py pyspark/staging.py code
+          cd code && zip -r ../dependencies.zip .
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
