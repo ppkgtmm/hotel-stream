@@ -20,11 +20,11 @@ jobs:
         uses: actions/checkout@v4
       - name: create dependency archive
         run: |
-        mkdir code
-        cp -R pyspark/ code
-        cd code
-        rm main.py
-        zip -r ../dependencies.zip .
+          mkdir code
+          cp -R pyspark/ code
+          cd code
+          rm main.py
+          zip -r ../dependencies.zip .
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -32,5 +32,5 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: deploy code to s3
         run: |
-        aws s3 cp pyspark/main.py s3://${{ env.BUCKET_NAME }}/pyspark/code/
-        aws s3 cp dependencies.zip s3://${{ env.BUCKET_NAME }}/pyspark/code/
+          aws s3 cp pyspark/main.py s3://${{ env.BUCKET_NAME }}/pyspark/code/
+          aws s3 cp dependencies.zip s3://${{ env.BUCKET_NAME }}/pyspark/code/
