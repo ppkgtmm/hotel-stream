@@ -1,0 +1,27 @@
+name: deploy code to s3
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy-job:
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      BUCKET_NAME : ${{ secrets.account_id }}-hotel-bucket
+      AWS_REGION : ap-south-1
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.account_id }}:role/github-action-s3
+          aws-region: ${{ env.AWS_REGION }}
+      - name: deploy code to s3
+        run: aws s3 cp pyspark/ s3://${{ env.BUCKET_NAME }}/pyspark/code/
