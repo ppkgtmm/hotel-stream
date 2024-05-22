@@ -14,10 +14,6 @@ aws_region = getenv("REGION")
 if __name__ == "__main__":
     spark = (
         SparkSession.builder.appName("hotel processor")
-        .config("spark.driver.memory", "1g")
-        .config("spark.executor.memory", "1g")
-        .config("spark.driver.cores", "1")
-        .config("spark.executor.cores", "1")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config(
             "spark.jars.packages",
