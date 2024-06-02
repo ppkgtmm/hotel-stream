@@ -11,6 +11,8 @@ class Processor:
         self.table_name = table_name
         self.project_id = project_id
         self.zone = zone
+        self.staging_dataset = "staging"
+        self.dest_dataset = "warehouse"
 
     def read_stream(self, spark: SparkSession):
         subscription = f"projects/{self.project_id}/locations/{self.zone}/subscriptions/{self.table_name}"
@@ -38,12 +40,8 @@ class Processor:
 
     def stage_records(self, df: DataFrame, table_name: str, mode="overwrite"):
         (
-            df.write.format("io.github.spark_redshift_community.spark.redshift")
-            .option("url", self.__jdbc_url)
-            .option("dbtable", table_name)
-            .option("tempdir", self.temp_dir)
-            .option("tempdir_region", self.aws_region)
-            .option("forward_spark_s3_credentials", "true")
+            df.write.format("bigquery")
+            .option("table", table_name)
             .mode(mode)
             .save()
         )
