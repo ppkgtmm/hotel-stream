@@ -20,68 +20,54 @@ if __name__ == "__main__":
         .load_stream()
     )
 
+    # (
+    #     DimensionProcessor("roomtype", project_id, zone)
+    #     .read_stream(spark)
+    #     .process_stream()
+    #     .load_stream()
+    # )
+
+    # (
+    #     DimensionProcessor("guest", project_id, zone)
+    #     .read_stream(spark)
+    #     .process_stream()
+    #     .load_stream()
+    # )
+
+    # (
+    #     DimensionProcessor("location", project_id, zone)
+    #     .read_stream(spark)
+    #     .process_stream()
+    #     .load_stream()
+    # )
+
+    # (
+    #     TableProcessor("room", project_id, zone)
+    #     .read_stream(spark)
+    #     .process_stream()
+    #     .load_stream()
+    # )
+
     (
-        DimensionProcessor(
-            "roomtype", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
+        TableProcessor("booking", project_id, zone)
+        .read_stream(spark)
         .process_stream()
         .load_stream()
     )
 
-    (
-        DimensionProcessor(
-            "guest", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
-        .process_stream()
-        .load_stream()
-    )
+    # (
+    #     TableProcessor("booking_room", project_id, zone)
+    #     .read_stream(spark)
+    #     .process_stream()
+    #     .load_stream()
+    # )
 
-    (
-        DimensionProcessor(
-            "location", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
-        .process_stream()
-        .load_stream()
-    )
-
-    (
-        TableProcessor(
-            "room", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
-        .process_stream()
-        .load_stream()
-    )
-
-    (
-        TableProcessor(
-            "booking", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
-        .process_stream()
-        .load_stream()
-    )
-
-    (
-        TableProcessor(
-            "booking_room", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
-        .process_stream()
-        .load_stream()
-    )
-
-    (
-        TableProcessor(
-            "booking_addon", username, password, host, database, s3_temp_dir, aws_region
-        )
-        .read_stream(spark, broker, topic_prefix)
-        .process_stream()
-        .load_stream()
-    )
+    # (
+    #     TableProcessor("booking_addon", project_id, zone)
+    #     .read_stream(spark)
+    #     .process_stream()
+    #     .load_stream()
+    # )
 
     try:
         spark.streams.awaitAnyTermination()
