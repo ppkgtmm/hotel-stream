@@ -9,8 +9,8 @@ class TableProcessor(Processor):
     def __upsert_records(self, df: DataFrame, batch_id: int):
         if df.count() == 0:
             return
-        temp_table = "staging.upsert_" + self.table_name
-        staging_table = "staging." + self.table_name
+        temp_table = self.staging_dataset + ".upsert_" + self.table_name
+        staging_table = self.staging_dataset + "." + self.table_name
         df = df.withColumn("is_deleted", lit(False))
         self.stage_records(df, temp_table)
         self.execute_query(get_upsert_query(staging_table, temp_table, df.columns))
