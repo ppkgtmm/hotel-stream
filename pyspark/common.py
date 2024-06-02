@@ -78,18 +78,17 @@ clean_map = {
     "booking_addon": booking_addon_clean,
 }
 
+maxid_query = "SELECT COALESCE(MAX(id), 0) FROM {dim}"
+
 dim_upsert_query = """
-    UPDATE {dim}
-    SET effective_until = {stage}.effective_from
-    FROM {stage}
-    WHERE {dim}._id = {stage}._id AND {dim}.effective_until IS NULL
+    MERGE INTO {dim} d USING {stage} s ON d._id = s._id
+    WHEN MATCHED AND d.effective_until IS NULL THEN UPDATE SET effective_until = s.effective_from
+    WHEN NOT MATCHED THEN INSERT (id, {columns}) VALUES ({maxid} + rownum, {columns})
 """
 
 dim_delete_query = """
-    UPDATE {dim}
-    SET effective_until = current_timestamp
-    FROM {stage}
-    WHERE {dim}._id = {stage}._id AND {dim}.effective_until IS NULL
+    MERGE INTO {dim} d USING {stage} s ON d._id = s._id
+    WHEN MATCHED AND d.effective_until IS NULL THEN UPDATE SET effective_until = current_timestamp
 """
 
 stg_delete_query = """
