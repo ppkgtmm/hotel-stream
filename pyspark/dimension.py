@@ -6,19 +6,8 @@ from processor import Processor
 
 class DimensionProcessor(Processor):
 
-    def __init__(
-        self,
-        dimension: str,
-        username: str,
-        password: str,
-        host: str,
-        database: str,
-        temp_dir: str,
-        aws_region: str,
-    ):
-        super().__init__(
-            dimension, username, password, host, database, temp_dir, aws_region
-        )
+    def __init__(self, dimension: str, project_id: str, zone: str):
+        super().__init__(dimension, project_id, zone)
 
     def __upsert_records(self, df: DataFrame, batch_id: int):
         if df.count() == 0:
