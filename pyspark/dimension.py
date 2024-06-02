@@ -43,6 +43,7 @@ class DimensionProcessor(Processor):
             self.data.filter(isnotnull(col("after")))
             .select("after.*")
             .selectExpr(*clean_map[self.table_name])
+            .withColumn("rownum", row_number().over(Window.orderBy("effective_from")))
             .writeStream.foreachBatch(self.__upsert_records)
             .start()
         )
