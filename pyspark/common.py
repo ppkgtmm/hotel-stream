@@ -81,19 +81,19 @@ clean_map = {
 maxid_query = "SELECT COALESCE(MAX(id), 0) FROM {dim}"
 
 dim_upsert_query = """
-    MERGE INTO {dim} d USING {stage} s ON d._id = s._id
-    WHEN MATCHED AND d.effective_until IS NULL THEN UPDATE SET effective_until = s.effective_from
+    MERGE INTO {dim} d USING {stage} s ON d._id = s._id AND d.effective_until IS NULL
+    WHEN MATCHED THEN UPDATE SET effective_until = s.effective_from
     WHEN NOT MATCHED THEN INSERT (id, {columns}) VALUES ({maxid} + rownum, {columns})
 """
 
 dim_delete_query = """
-    MERGE INTO {dim} d USING {stage} s ON d._id = s._id
-    WHEN MATCHED AND d.effective_until IS NULL THEN UPDATE SET effective_until = current_timestamp
+    MERGE INTO {dim} d USING {stage} s ON d._id = s._id AND d.effective_until IS NULL
+    WHEN MATCHED THEN UPDATE SET effective_until = current_timestamp
 """
 
 stg_delete_query = """
     MERGE INTO {stg} s USING {temp} t ON s.id = t.id
-    WHEN MATCHED THEN SET is_deleted = t.is_deleted
+    WHEN MATCHED THEN UPDATE SET is_deleted = t.is_deleted
 """
 
 
