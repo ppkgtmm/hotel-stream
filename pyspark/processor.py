@@ -48,4 +48,4 @@ class Processor:
 
     def execute_query(self, query: str):
         with Client() as bq_client:
-            bq_client.query(query).result()
+            return bq_client.query(query).result()
