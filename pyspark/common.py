@@ -92,10 +92,8 @@ dim_delete_query = """
 """
 
 stg_delete_query = """
-    UPDATE {stg}
-    SET is_deleted = {temp}.is_deleted
-    FROM {temp}
-    WHERE {stg}.id = {temp}.id
+    MERGE INTO {stg} s USING {temp} t ON s.id = t.id
+    WHEN MATCHED THEN SET is_deleted = t.is_deleted
 """
 
 
