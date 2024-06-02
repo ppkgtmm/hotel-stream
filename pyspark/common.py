@@ -101,5 +101,5 @@ def get_upsert_query(staging_table: str, temp_table: str, columns: list[str]):
     return f"""
         MERGE INTO {staging_table} s USING {temp_table} t ON s.id = t.id
         WHEN MATCHED THEN UPDATE SET {", ".join(["{} = t.{}".format(col, col) for col in columns])}
-        WHEN NOT MATCHED THEN INSERT VALUES ({", ".join(columns)})
+        WHEN NOT MATCHED THEN INSERT ({", ".join(columns)}) VALUES ({", ".join(columns)})
     """
