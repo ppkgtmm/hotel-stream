@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.functions import col, get_json_object, from_json
 from common import schema_map
-import redshift_connector
+from google.cloud.bigquery import Client
 
 
 class Processor:
@@ -47,8 +47,5 @@ class Processor:
         )
 
     def execute_query(self, query: str):
-        # redshift_connector.paramstyle = "named"
-        with redshift_connector.connect(**self.redshift_parameters) as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(query)
-            conn.commit()
+        with Client() as bq_client:
+            bq_client.query(query).result()
