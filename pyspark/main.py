@@ -4,6 +4,8 @@ import traceback
 from dimension import DimensionProcessor
 from staging import TableProcessor
 
+project_id = getenv("GCP_PROJECT")
+zone = getenv("GCP_ZONE")
 
 if __name__ == "__main__":
     spark: SparkSession = (
