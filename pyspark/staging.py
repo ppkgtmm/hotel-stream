@@ -18,8 +18,8 @@ class TableProcessor(Processor):
     def __delete_records(self, df: DataFrame, batch_id: int):
         if df.count() == 0:
             return
-        temp_table = "staging.delete_" + self.table_name
-        staging_table = "staging." + self.table_name
+        temp_table = self.staging_dataset + ".delete_" + self.table_name
+        staging_table = self.staging_dataset + "." + self.table_name
         df = df.withColumn("is_deleted", lit(True))
         self.stage_records(df, temp_table)
         self.execute_query(stg_delete_query.format(stg=staging_table, temp=temp_table))
