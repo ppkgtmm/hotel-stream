@@ -12,19 +12,27 @@ class DimensionProcessor(Processor):
     def __upsert_records(self, df: DataFrame, batch_id: int):
         if df.count() == 0:
             return
-        staging_table = "staging.upsert_" + self.table_name
-        dimension_table = "dim_" + self.table_name
+        staging_table = self.staging_dataset + ".upsert_" + self.table_name
+        dimension_table = self.dest_dataset + ".dim_" + self.table_name
         self.stage_records(df, staging_table)
         self.execute_query(
-            dim_upsert_query.format(dim=dimension_table, stage=staging_table)
+            dim_upsert_query.format(
+                dim=dimension_table,
+                stage=staging_table,
+                maxid=(
+                    self.execute_query(maxid_query.format(dim=dimension_table))
+                    .to_dataframe()
+                    .iloc[0, 0]
+                ),
+                columns=", ".join([col for col in df.columns if col != "rownum"]),
+            )
         )
-        self.stage_records(df, dimension_table, "append")
 
     def __delete_records(self, df: DataFrame, batch_id: int):
         if df.count() == 0:
             return
-        staging_table = "staging.delete_" + self.table_name
-        dimension_table = "dim_" + self.table_name
+        staging_table = self.staging_dataset + ".delete_" + self.table_name
+        dimension_table = self.dest_dataset + ".dim_" + self.table_name
         self.stage_records(df, staging_table)
         self.execute_query(
             dim_delete_query.format(dim=dimension_table, stage=staging_table)
