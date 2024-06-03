@@ -1,5 +1,5 @@
-from pyspark.sql import DataFrame, Window
-from pyspark.sql.functions import col, isnotnull, isnull, row_number
+from pyspark.sql import DataFrame
+from pyspark.sql.functions import col, isnotnull, isnull
 from common import clean_map, dim_upsert_query, dim_delete_query, maxid_query
 from processor import Processor
 
@@ -24,7 +24,7 @@ class DimensionProcessor(Processor):
                     .to_dataframe()
                     .iloc[0, 0]
                 ),
-                columns=", ".join([col for col in df.columns if col != "rownum"]),
+                columns=", ".join(df.columns),
             )
         )
 
@@ -43,7 +43,6 @@ class DimensionProcessor(Processor):
             self.data.filter(isnotnull(col("after")))
             .select("after.*")
             .selectExpr(*clean_map[self.table_name])
-            .withColumn("rownum", row_number().over(Window.orderBy("effective_from")))
             .writeStream.foreachBatch(self.__upsert_records)
             .start()
         )
