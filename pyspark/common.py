@@ -81,7 +81,11 @@ clean_map = {
 maxid_query = "SELECT COALESCE(MAX(id), 0) FROM {dim}"
 
 dim_upsert_query = """
-    MERGE INTO {dim} d USING {stage} s ON d._id = s._id AND d.effective_until IS NULL
+    WITH enriched AS (
+        SELECT *, ROW_NUMBER() OVER(ORDER BY effective_from) AS rownum
+        FROM {stage}
+    )
+    MERGE INTO {dim} d USING enriched s ON d._id = s._id AND d.effective_until IS NULL
     WHEN MATCHED THEN UPDATE SET effective_until = s.effective_from
     WHEN NOT MATCHED THEN INSERT (id, {columns}) VALUES ({maxid} + rownum, {columns})
 """
