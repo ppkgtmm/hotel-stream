@@ -17,6 +17,7 @@ if __name__ == "__main__":
         .getOrCreate()
     )
     spark.conf.set('temporaryGcsBucket', getenv("GCS_BUCKET"))
+    spark._jsc.hadoopConfiguration().set('fs.gs.impl', 'com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem')
 
     (
         DimensionProcessor("addon", project_id, zone)
