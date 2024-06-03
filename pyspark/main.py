@@ -16,6 +16,7 @@ if __name__ == "__main__":
         .config("spark.executor.cores", "1")
         .getOrCreate()
     )
+    spark.conf.set('temporaryGcsBucket', getenv("GCS_BUCKET"))
 
     (
         DimensionProcessor("addon", project_id, zone)
