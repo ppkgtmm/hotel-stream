@@ -17,7 +17,7 @@ dim_schema_map = {
     "location": location_schema,
 }
 
-stg_schema__map = {
+stg_schema_map = {
     "booking": booking_schema,
     "booking_room": booking_room_schema,
     "booking_addon": booking_addon_schema,
