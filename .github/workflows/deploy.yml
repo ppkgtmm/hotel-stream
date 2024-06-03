@@ -18,7 +18,7 @@ jobs:
       - name: create dependency archive
         run: |
           mkdir code
-          cp -R pyspark/common.py pyspark/dimension.py pyspark/processor.py pyspark/staging.py code
+          cp -R pyspark/common.py pyspark/dimension.py pyspark/processor.py pyspark/staging.py pyspark/temp.py code
           cd code && zip -r ../dependencies.zip .
       - name: gcloud auth
         uses: google-github-actions/auth@v2
