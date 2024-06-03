@@ -1,6 +1,6 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, isnotnull, isnull, lit
-from common import clean_map, get_upsert_query, stg_delete_query
+from pyspark.sql.functions import col, isnotnull, isnull, lit, from_json
+from common import stg_clean_map, stg_schema_map, get_upsert_query, stg_delete_query
 from processor import Processor
 
 
@@ -26,16 +26,28 @@ class TableProcessor(Processor):
 
     def load_stream(self):
         (
-            self.data.filter(isnotnull(col("after")))
+            self.data.select(
+                from_json(col("before"), stg_schema_map[self.table_name]).alias(
+                    "before"
+                ),
+                from_json(col("after"), stg_schema_map[self.table_name]).alias("after"),
+            )
+            .filter(isnotnull(col("after")))
             .select("after.*")
-            .selectExpr(*clean_map[self.table_name])
+            .selectExpr(*stg_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__upsert_records)
             .start()
         )
         (
-            self.data.filter(isnotnull(col("before")) & isnull(col("after")))
+            self.data.select(
+                from_json(col("before"), stg_schema_map[self.table_name]).alias(
+                    "before"
+                ),
+                from_json(col("after"), stg_schema_map[self.table_name]).alias("after"),
+            )
+            .filter(isnotnull(col("before")) & isnull(col("after")))
             .select("before.*")
-            .selectExpr(*clean_map[self.table_name])
+            .selectExpr(*stg_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__delete_records)
             .start()
         )
