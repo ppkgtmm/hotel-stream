@@ -2,6 +2,7 @@ addon_schema = "id INT, name STRING, price FLOAT, updated_at LONG"
 roomtype_schema = "id INT, name STRING, price FLOAT, updated_at LONG"
 guest_schema = "id INT, email STRING, dob LONG, gender STRING, updated_at LONG"
 location_schema = "id INT, state STRING, country STRING, updated_at LONG"
+guest_stg_schema = "id INT, location INT, updated_at LONG"
 room_schema = "id INT, roomtype INT, updated_at LONG"
 booking_schema = "id INT, checkin LONG, checkout LONG, updated_at LONG"
 booking_room_schema = "id INT, booking INT, room INT, guest INT, updated_at LONG"
@@ -9,15 +10,22 @@ booking_addon_schema = (
     "id INT, booking_room INT, addon INT, quantity INT, timestamp LONG, updated_at LONG"
 )
 
-schema_map = {
+dim_schema_map = {
     "addon": addon_schema,
     "roomtype": roomtype_schema,
     "guest": guest_schema,
     "location": location_schema,
-    "room": room_schema,
+}
+
+stg_schema__map = {
     "booking": booking_schema,
     "booking_room": booking_room_schema,
     "booking_addon": booking_addon_schema,
+}
+
+temp_schema_map = {
+    "guest": guest_stg_schema,
+    "room": room_schema,
 }
 
 addon_clean = (
@@ -45,6 +53,11 @@ location_clean = (
     "country",
     "CAST(updated_at/1000000 AS TIMESTAMP) AS effective_from",
 )
+guest_stg_clean = (
+    "id",
+    "location",
+    "CAST(updated_at/1000000 AS TIMESTAMP) AS updated_at",
+)
 room_clean = ("id", "roomtype", "CAST(updated_at/1000000 AS TIMESTAMP) AS updated_at")
 booking_clean = (
     "id",
@@ -67,15 +80,23 @@ booking_addon_clean = (
     "CAST(timestamp/1000000 AS TIMESTAMP) AS timestamp",
     "CAST(updated_at/1000000 AS TIMESTAMP) AS updated_at",
 )
-clean_map = {
+
+dim_clean_map = {
     "addon": addon_clean,
     "roomtype": roomtype_clean,
     "guest": guest_clean,
     "location": location_clean,
-    "room": room_clean,
+}
+
+stg_clean_map = {
     "booking": booking_clean,
     "booking_room": booking_room_clean,
     "booking_addon": booking_addon_clean,
+}
+
+temp_clean_map = {
+    "room": room_clean,
+    "guest": guest_stg_clean,
 }
 
 maxid_query = "SELECT COALESCE(MAX(id), 0) FROM {dim}"
