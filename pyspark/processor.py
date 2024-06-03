@@ -34,12 +34,7 @@ class Processor:
         return self
 
     def stage_records(self, df: DataFrame, table_name: str, mode="overwrite"):
-        (
-            df.write.format("bigquery")
-            .option("table", table_name)
-            .mode(mode)
-            .save()
-        )
+        (df.write.format("bigquery").option("table", table_name).mode(mode).save())
 
     def execute_query(self, query: str):
         with Client() as bq_client:
