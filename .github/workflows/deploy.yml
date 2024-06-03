@@ -1,0 +1,32 @@
+name: deploy code to gcs
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy-job:
+    permissions:
+      contents: read
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: create dependency archive
+        run: |
+          mkdir code
+          cp -R pyspark/common.py pyspark/dimension.py pyspark/processor.py pyspark/staging.py code
+          cd code && zip -r ../dependencies.zip .
+      - name: gcloud auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/${{ secrets.project_id }}/locations/global/workloadIdentityPools/github/providers/hotel-connector
+      - name: set up gcloud sdk
+        uses: google-github-actions/setup-gcloud@v2
+      - name: deploy code
+        run: |
+          gcloud storage cp dependencies.zip gs://${{ secrets.project_id }}-cloud-functions/pyspark/
+          gcloud storage cp pyspark/main.py gs://${{ secrets.project_id }}-cloud-functions/pyspark/
