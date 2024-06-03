@@ -1,6 +1,5 @@
 from pyspark.sql import SparkSession, DataFrame
-from pyspark.sql.functions import col, get_json_object, from_json
-from common import schema_map
+from pyspark.sql.functions import col, get_json_object
 from google.cloud.bigquery import Client
 
 
@@ -31,10 +30,6 @@ class Processor:
             self.data.select(col("data").cast("string").alias("data"))
             .withColumn("before", get_json_object(col("data"), "$.payload.before"))
             .withColumn("after", get_json_object(col("data"), "$.payload.after"))
-            .select(
-                from_json(col("before"), schema_map[self.table_name]).alias("before"),
-                from_json(col("after"), schema_map[self.table_name]).alias("after"),
-            )
         )
         return self
 
