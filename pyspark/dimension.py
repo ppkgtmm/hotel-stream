@@ -1,6 +1,12 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, isnotnull, isnull
-from common import clean_map, dim_upsert_query, dim_delete_query, maxid_query
+from pyspark.sql.functions import col, isnotnull, isnull, from_json
+from common import (
+    dim_clean_map,
+    dim_schema_map,
+    dim_upsert_query,
+    dim_delete_query,
+    maxid_query,
+)
 from processor import Processor
 
 
@@ -40,16 +46,28 @@ class DimensionProcessor(Processor):
 
     def load_stream(self):
         (
-            self.data.filter(isnotnull(col("after")))
+            self.data.select(
+                from_json(col("before"), dim_schema_map[self.table_name]).alias(
+                    "before"
+                ),
+                from_json(col("after"), dim_schema_map[self.table_name]).alias("after"),
+            )
+            .filter(isnotnull(col("after")))
             .select("after.*")
-            .selectExpr(*clean_map[self.table_name])
+            .selectExpr(*dim_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__upsert_records)
             .start()
         )
         (
-            self.data.filter(isnotnull(col("before")) & isnull(col("after")))
+            self.data.select(
+                from_json(col("before"), dim_schema_map[self.table_name]).alias(
+                    "before"
+                ),
+                from_json(col("after"), dim_schema_map[self.table_name]).alias("after"),
+            )
+            .filter(isnotnull(col("before")) & isnull(col("after")))
             .select("before.*")
-            .selectExpr(*clean_map[self.table_name])
+            .selectExpr(*dim_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__delete_records)
             .start()
         )
