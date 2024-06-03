@@ -3,6 +3,7 @@ from os import getenv
 import traceback
 from dimension import DimensionProcessor
 from staging import TableProcessor
+from temp import TempTableProcessor
 
 project_id = getenv("GCP_PROJECT")
 zone = getenv("GCP_ZONE")
@@ -27,33 +28,40 @@ if __name__ == "__main__":
         .load_stream()
     )
 
-    # (
-    #     DimensionProcessor("roomtype", project_id, zone)
-    #     .read_stream(spark)
-    #     .process_stream()
-    #     .load_stream()
-    # )
+    (
+        DimensionProcessor("roomtype", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
 
-    # (
-    #     DimensionProcessor("guest", project_id, zone)
-    #     .read_stream(spark)
-    #     .process_stream()
-    #     .load_stream()
-    # )
+    (
+        DimensionProcessor("guest", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
 
-    # (
-    #     DimensionProcessor("location", project_id, zone)
-    #     .read_stream(spark)
-    #     .process_stream()
-    #     .load_stream()
-    # )
+    (
+        TempTableProcessor("guest", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
 
-    # (
-    #     TableProcessor("room", project_id, zone)
-    #     .read_stream(spark)
-    #     .process_stream()
-    #     .load_stream()
-    # )
+    (
+        DimensionProcessor("location", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
+
+    (
+        TempTableProcessor("room", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
 
     (
         TableProcessor("booking", project_id, zone)
@@ -62,19 +70,19 @@ if __name__ == "__main__":
         .load_stream()
     )
 
-    # (
-    #     TableProcessor("booking_room", project_id, zone)
-    #     .read_stream(spark)
-    #     .process_stream()
-    #     .load_stream()
-    # )
+    (
+        TableProcessor("booking_room", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
 
-    # (
-    #     TableProcessor("booking_addon", project_id, zone)
-    #     .read_stream(spark)
-    #     .process_stream()
-    #     .load_stream()
-    # )
+    (
+        TableProcessor("booking_addon", project_id, zone)
+        .read_stream(spark)
+        .process_stream()
+        .load_stream()
+    )
 
     try:
         spark.streams.awaitAnyTermination()
