@@ -11,8 +11,8 @@ zone = getenv("GCP_ZONE")
 if __name__ == "__main__":
     spark: SparkSession = (
         SparkSession.builder.appName("hotel processor")
-        .config("spark.driver.memory", "1g")
-        .config("spark.executor.memory", "1g")
+        .config("spark.driver.memory", "512m")
+        .config("spark.executor.memory", "512m")
         .config("spark.driver.cores", "1")
         .config("spark.executor.cores", "1")
         .getOrCreate()
