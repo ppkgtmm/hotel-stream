@@ -1,12 +1,12 @@
 from pyspark.sql import SparkSession
-from os import getenv
 import traceback
 from dimension import DimensionProcessor
 from staging import TableProcessor
 from temp import TempTableProcessor
+import sys
 
-project_id = getenv("GCP_PROJECT")
-zone = getenv("GCP_ZONE")
+project_id = sys.argv[1]
+zone = sys.argv[2]
 
 if __name__ == "__main__":
     spark: SparkSession = (
@@ -17,7 +17,7 @@ if __name__ == "__main__":
         .config("spark.executor.cores", "1")
         .getOrCreate()
     )
-    spark.conf.set("temporaryGcsBucket", getenv("GCS_BUCKET"))
+    spark.conf.set("temporaryGcsBucket", sys.argv[3])
     spark._jsc.hadoopConfiguration().set('fs.gs.impl', 'com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem')
     spark._jsc.hadoopConfiguration().set("fs.gs.project.id", project_id)
 
