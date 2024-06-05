@@ -37,5 +37,4 @@ class Processor:
         (df.write.format("bigquery").option("table", table_name).mode(mode).save())
 
     def execute_query(self, query: str):
-        with Client() as bq_client:
-            return bq_client.query(query).result()
+        return Client().query(query).result()
