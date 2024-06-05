@@ -1,5 +1,5 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, isnotnull, from_json
+from pyspark.sql.functions import col, from_json
 from common import temp_clean_map, temp_schema_map
 from processor import Processor
 
@@ -22,7 +22,7 @@ class TempTableProcessor(Processor):
                     "after"
                 ),
             )
-            .filter(isnotnull(col("after")))
+            .filter(col("after").isNotNull())
             .select("after.*")
             .selectExpr(*temp_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__insert_records)

@@ -1,5 +1,5 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, isnotnull, isnull, from_json
+from pyspark.sql.functions import col, isnull, from_json
 from common import (
     dim_clean_map,
     dim_schema_map,
@@ -52,7 +52,7 @@ class DimensionProcessor(Processor):
                 ),
                 from_json(col("after"), dim_schema_map[self.table_name]).alias("after"),
             )
-            .filter(isnotnull(col("after")))
+            .filter(col("after").isNotNull())
             .select("after.*")
             .selectExpr(*dim_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__upsert_records)
@@ -65,7 +65,7 @@ class DimensionProcessor(Processor):
                 ),
                 from_json(col("after"), dim_schema_map[self.table_name]).alias("after"),
             )
-            .filter(isnotnull(col("before")) & isnull(col("after")))
+            .filter(col("before").isNotNull() & isnull(col("after")))
             .select("before.*")
             .selectExpr(*dim_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__delete_records)

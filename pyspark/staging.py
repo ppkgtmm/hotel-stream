@@ -1,5 +1,5 @@
 from pyspark.sql import DataFrame
-from pyspark.sql.functions import col, isnotnull, isnull, lit, from_json
+from pyspark.sql.functions import col, isnull, lit, from_json
 from common import stg_clean_map, stg_schema_map, get_upsert_query, stg_delete_query
 from processor import Processor
 
@@ -32,7 +32,7 @@ class TableProcessor(Processor):
                 ),
                 from_json(col("after"), stg_schema_map[self.table_name]).alias("after"),
             )
-            .filter(isnotnull(col("after")))
+            .filter(col("after").isNotNull())
             .select("after.*")
             .selectExpr(*stg_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__upsert_records)
@@ -45,7 +45,7 @@ class TableProcessor(Processor):
                 ),
                 from_json(col("after"), stg_schema_map[self.table_name]).alias("after"),
             )
-            .filter(isnotnull(col("before")) & isnull(col("after")))
+            .filter(col("before").isNotNull() & isnull(col("after")))
             .select("before.*")
             .selectExpr(*stg_clean_map[self.table_name])
             .writeStream.foreachBatch(self.__delete_records)
