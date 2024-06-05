@@ -7,7 +7,7 @@ room_schema = "id INT, roomtype INT, updated_at LONG"
 booking_schema = "id INT, checkin LONG, checkout LONG, updated_at LONG"
 booking_room_schema = "id INT, booking INT, room INT, guest INT, updated_at LONG"
 booking_addon_schema = (
-    "id INT, booking_room INT, addon INT, quantity INT, timestamp LONG, updated_at LONG"
+    "id INT, booking_room INT, addon INT, quantity INT, datetime LONG, updated_at LONG"
 )
 
 dim_schema_map = {
@@ -77,7 +77,7 @@ booking_addon_clean = (
     "booking_room",
     "addon",
     "quantity",
-    "CAST(timestamp/1000000 AS TIMESTAMP) AS timestamp",
+    "CAST(datetime/1000000 AS TIMESTAMP) AS datetime",
     "CAST(updated_at/1000000 AS TIMESTAMP) AS updated_at",
 )
 
